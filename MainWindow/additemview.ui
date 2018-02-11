@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddItemView</class>
+ <widget class="QWidget" name="AddItemView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>625</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item row="20" column="1">
+    <widget class="QLineEdit" name="storageLineEdit"/>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="customCategoryLbl">
+     <property name="text">
+      <string>Kategorie:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="18" column="0">
+    <widget class="QLabel" name="placeLbl">
+     <property name="text">
+      <string>Platz:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="22" column="0">
+    <widget class="QLabel" name="expireDateLbl">
+     <property name="text">
+      <string>Ablaufdatum:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="22" column="1">
+    <widget class="QDateEdit" name="expirationDateEdit">
+     <property name="calendarPopup">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="23" column="0">
+    <widget class="QLabel" name="descriptionLbl">
+     <property name="text">
+      <string>Beschreibung:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="23" column="1">
+    <widget class="QPlainTextEdit" name="descriptionTextEdit"/>
+   </item>
+   <item row="24" column="0">
+    <widget class="QLabel" name="imageLbl">
+     <property name="text">
+      <string>Bild:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="24" column="1">
+    <widget class="QFrame" name="imageFrame">
+     <property name="minimumSize">
+      <size>
+       <width>140</width>
+       <height>140</height>
+      </size>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Panel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="19" column="1">
+    <widget class="QComboBox" name="storageComboBox"/>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLineEdit" name="customCategoryLineEdit"/>
+   </item>
+   <item row="7" column="1">
+    <widget class="QComboBox" name="categoryComboBox"/>
+   </item>
+   <item row="17" column="1">
+    <widget class="QLineEdit" name="roomLineEdit"/>
+   </item>
+   <item row="15" column="0">
+    <widget class="QLabel" name="roomLbl">
+     <property name="text">
+      <string>Raum:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="1">
+    <widget class="QComboBox" name="roomComboBox"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="titleLbl">
+     <property name="text">
+      <string>Titel:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLineEdit" name="titleLineEdit"/>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>titleLineEdit</tabstop>
+  <tabstop>categoryComboBox</tabstop>
+  <tabstop>customCategoryLineEdit</tabstop>
+  <tabstop>roomComboBox</tabstop>
+  <tabstop>roomLineEdit</tabstop>
+  <tabstop>storageComboBox</tabstop>
+  <tabstop>storageLineEdit</tabstop>
+  <tabstop>expirationDateEdit</tabstop>
+  <tabstop>descriptionTextEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
