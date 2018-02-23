@@ -4,8 +4,9 @@
 #include "shelf.h"
 
 #include <QDate>
+#include <QImage>
 
-Item::Item(const QString &id, const QString& name, const QString& description, Category* category, QImage* picture)
+Item::Item(const QString &id, const QString& name, const QString& description, Category* category, QPixmap* picture)
     :m_id(id), m_name(name), m_description(description), m_category(category), m_picture(picture)
 {
 }
@@ -37,9 +38,9 @@ void Item::setDescription(const QString &description)
     m_description = QString(description);
 }
 
-Category& Item::category()
+Category* Item::category()
 {
-    return *m_category;
+    return m_category;
 }
 
 void Item::setCategory(Category* category)
@@ -47,12 +48,12 @@ void Item::setCategory(Category* category)
     m_category = category;
 }
 
-QImage* Item::picture()
+QPixmap* Item::picture()
 {
     return m_picture;
 }
 
-void Item::setPicture(QImage *picture)
+void Item::setPicture(QPixmap *picture)
 {
     m_picture = picture;
 }
@@ -67,9 +68,9 @@ void Item::setId(const QString &id)
     m_id = QString(id);
 }
 
-Shelf& Item::shelf()
+Shelf* Item::shelf()
 {
-    return *m_shelf;
+    return m_shelf;
 }
 
 void Item::setShelf(Shelf* shelf)

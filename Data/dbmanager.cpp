@@ -5,6 +5,8 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlError>
+#include <QPixmap>
+#include <QBuffer>
 
 #include "Data/item.h"
 #include "Data/category.h"
@@ -267,14 +269,17 @@ void DBManager::updateDescription(const QString& itemId, const QString& desc) {
     q.exec();
 }
 
-void DBManager::updateImage(const QString& itemId, QImage* image) {
+void DBManager::updateImage(const QString& itemId, QPixmap* image) {
     QSqlQuery q(m_db);
     q.prepare("update " + DB_ITEM + " set image = :image where id = :itemID;");
     if (image == NULL) {
         q.bindValue(":image", "");
     } else {
-        QByteArray arr((char*)image->bits(), image->byteCount());
-        q.bindValue(":image", arr);
+        QByteArray bArray;
+        QBuffer buffer(&bArray);
+        buffer.open(QIODevice::WriteOnly);
+        image->save(&buffer, "PNG");
+        q.bindValue(":image", bArray);
     }
     q.bindValue(":itemID", itemId);
     q.exec();
@@ -306,13 +311,13 @@ bool DBManager::addOrUpdateEntryToShelfTable(Shelf& shelf) {
     if (hasShelfEntry(shelf.id())) {
         q.prepare("update " + DB_SHELF + " set room = :roomID, title = :shelfTitle"
                                          " where id = :id;");
-        q.bindValue(":roomID", shelf.room().id());
+        q.bindValue(":roomID", shelf.room()->id());
         q.bindValue(":shelfTitle", shelf.title());
         q.bindValue(":id", shelf.id());
         return q.exec();
     } else {
         q.prepare("insert into " + DB_SHELF + " (room, title) values (:roomID, :shelfTitle)");
-        q.bindValue(":roomID", shelf.room().id());
+        q.bindValue(":roomID", shelf.room()->id());
         q.bindValue(":shelfTitle", shelf.title());
         if (q.exec()) {
             shelf.setId(getLastId(DB_SHELF));
@@ -342,9 +347,9 @@ bool DBManager::addOrUpdateEntryToCategoryTable(Category& category) {
 }
 
 bool DBManager::addOrUpdateEntryToItemTable(Item& item) {
-    this->addOrUpdateEntryToCategoryTable(item.category());
-    this->addOrUpdateEntryToRoomTable(item.shelf().room());
-    this->addOrUpdateEntryToShelfTable(item.shelf());
+    this->addOrUpdateEntryToCategoryTable(*item.category());
+    this->addOrUpdateEntryToRoomTable(*item.shelf()->room());
+    this->addOrUpdateEntryToShelfTable(*item.shelf());
     if (!hasItemEntry(item.id())) {
         QSqlQuery query(m_db);
         query.prepare(QString("insert into ").append(DB_ITEM)
@@ -353,13 +358,18 @@ bool DBManager::addOrUpdateEntryToItemTable(Item& item) {
         query.bindValue(":title", item.name());
         query.bindValue(":description", item.description());
         if (item.picture() != 0) {
-            QByteArray arr((char*)item.picture()->bits(), item.picture()->byteCount());
-            query.bindValue(":image", arr);
+            QByteArray bArray;
+            QBuffer buffer(&bArray);
+            buffer.open(QIODevice::WriteOnly);
+            item.picture()->save(&buffer, "PNG");
+
+//            QByteArray arr((char*)->bits(), item.picture()->byteCount());
+            query.bindValue(":image", bArray);
         } else {
             query.bindValue(":image", QVariant::ByteArray);
         }
-        query.bindValue(":category", item.category().id());
-        query.bindValue(":shelf", item.shelf().id());
+        query.bindValue(":category", item.category()->id());
+        query.bindValue(":shelf", item.shelf()->id());
         if (!query.exec()) {
             qDebug() << "Error occured inserting item: " << query.lastError();
             qDebug() << query.lastQuery();

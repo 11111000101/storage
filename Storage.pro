@@ -7,7 +7,7 @@
 CONFIG += c++11
 
 
-QT       += core gui sql
+QT       += core gui sql multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -42,7 +42,9 @@ SOURCES += \
     MainWindow/additemmodel.cpp \
     MainWindow/additempresenter.cpp \
     Data/datamodel.cpp \
-    Data/room.cpp
+    Data/room.cpp \
+    MainWindow/CameraView.cpp \
+    ClickableLabel.cpp
 
 HEADERS += \
     Data/dbmanager.h \
@@ -61,7 +63,10 @@ HEADERS += \
     MainWindow/additemmodel.h \
     MainWindow/additempresenter.h \
     Data/datamodel.h \
-    Data/room.h
+    Data/room.h \
+    MainWindow/IItemView.hpp \
+    MainWindow/CameraView.hpp \
+    ClickableLabel.hpp
 
 FORMS += \
         MainWindow/mainwindow.ui \

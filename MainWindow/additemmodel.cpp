@@ -16,6 +16,15 @@ AddItemModel::~AddItemModel(){
     qDebug() << "~AddItemModel";
 }
 
+void AddItemModel::setItem(Item* i) {
+    this->m_item = i;
+    emit this->itemSet();
+}
+
+void saveItem() {
+
+}
+
 QList<Category*> AddItemModel::getAllCategories() {
     return m_db->getAllCategories();
 }
@@ -24,11 +33,7 @@ QList<Shelf*> AddItemModel::getAllShelves() {
     return m_db->getAllShelves();
 }
 
-void AddItemModel::saveItem(const QString& id, QString& name, QString& description,
-                            Category* category, Shelf* shelf, QDate& expirationDate, QImage* picture) {
-    Item i(id, name, description, category, picture);
-    i.setShelf(shelf);
-    i.setExpirationDate(expirationDate);
-    m_db->addOrUpdateEntryToItemTable(i);
-    emit itemUpdatedOrInserted(i.id());
+void AddItemModel::saveItem() {
+    m_db->addOrUpdateEntryToItemTable(*this->m_item);
+    emit itemUpdatedOrInserted(m_item->id());
 }

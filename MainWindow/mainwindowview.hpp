@@ -39,6 +39,13 @@ public slots:
     virtual void show();
     virtual void hide();
 
+    virtual void onItemBtnClicked(bool);
+
+    void test(QString);
+
+signals:
+    void itemSelected(QString);
+
 private:
     QWidget* m_widget;
     Ui::MainViewForm* ui;

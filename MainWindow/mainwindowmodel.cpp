@@ -59,6 +59,6 @@ void MainWindowModel::changeDescription(QString& itemId, QString& desc) {
     m_db->updateDescription(itemId, desc);
 }
 
-void MainWindowModel::changeImage(QString& itemId, QImage* image) {
+void MainWindowModel::changeImage(QString& itemId, QPixmap* image) {
     m_db->updateImage(itemId, image);
 }

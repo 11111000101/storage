@@ -4,7 +4,7 @@
 #include <QSqlDatabase>
 #include <QList>
 
-class QImage;
+class QPixmap;
 class Item;
 class Category;
 class Shelf;
@@ -24,7 +24,7 @@ public:
     void updateCategory(const QString &itemId, const QString &category);
     void updateTitle(const QString &itemId, const QString &title);
     void updateDescription(const QString &itemId, const QString &desc);
-    void updateImage(const QString &itemId, QImage* image);
+    void updateImage(const QString &itemId, QPixmap* image);
 
     bool addOrUpdateEntryToRoomTable(Room& room);
     bool addOrUpdateEntryToShelfTable(Shelf& shelf);

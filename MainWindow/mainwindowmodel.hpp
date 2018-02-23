@@ -4,6 +4,7 @@
 #include "imainwindowmodel.hpp"
 
 class DBManager;
+class QPixmap;
 
 class MainWindowModel : public IMainWindowModel
 {
@@ -18,7 +19,7 @@ public slots:
     virtual void changeCategory(QString& itemId, QString& category);
     virtual void changeTitle(QString& itemId, QString& title);
     virtual void changeDescription(QString& itemId, QString& desc);
-    virtual void changeImage(QString& itemId, QImage* image);
+    virtual void changeImage(QString& itemId, QPixmap* image);
 
 signals:
     void signal_itemUpdated(Item* i);

@@ -9,9 +9,9 @@ Shelf::~Shelf() {
     delete m_room;
 }
 
-Room& Shelf::room()
+Room* Shelf::room()
 {
-    return *m_room;
+    return m_room;
 }
 
 void Shelf::setRoom(Room *place)

@@ -11,7 +11,7 @@ public:
     Shelf();
     ~Shelf();
 
-    Room& room();
+    Room* room();
     void setRoom(Room* room);
 
     QString& id();

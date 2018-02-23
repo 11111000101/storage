@@ -18,6 +18,12 @@ MainWindowView::MainWindowView(QWidget *parent) :
     ui->setupUi(m_widget);
     m_placeholderLayout = new QGridLayout();
     ui->placeholder->setLayout(m_placeholderLayout);
+    connect(this, SIGNAL(itemSelected(QString)),
+            this, SLOT(test(QString)));
+}
+
+void MainWindowView::test(QString id) {
+    qDebug() << "---------------------\n" << id;
 }
 
 QWidget* MainWindowView::getWidget() {
@@ -29,12 +35,22 @@ void MainWindowView::addOrUpdateItem(Item& item) {
         QPushButton* btn = m_itemMap.key(item.id());
 
     } else { // new Item
-        QGroupBox* groupBox = getCategoryGroup(item.category().title());
+        QGroupBox* groupBox = getCategoryGroup(item.category()->title());
         QPushButton* itemBtn = new QPushButton(item.name());
+        QObject::connect(itemBtn, SIGNAL(clicked(bool)),
+                         this, SLOT(onItemBtnClicked(bool)));
+
+        m_itemMap.insert(itemBtn, item.id());
+
 
         QGridLayout* layout = ((QGridLayout*)groupBox->layout());
         layout->addWidget(itemBtn, layout->rowCount(), 1, 3, 1, Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
     }
+}
+
+void MainWindowView::onItemBtnClicked(bool) {
+    QPushButton* buttonSender = qobject_cast<QPushButton*>(sender());
+    emit itemSelected(m_itemMap[buttonSender]);
 }
 
 QGroupBox* MainWindowView::getCategoryGroup(const QString& category) {
@@ -55,10 +71,6 @@ void MainWindowView::addCategory(QString& category) {
 
 }
 
-//void MainWindowView::addItemToCategory(QString& category, QString& item) {
-
-//}
-
 void MainWindowView::removeCategory(QString& category) {
 
 }
@@ -73,18 +85,10 @@ int MainWindowView::getNofItemsInCategory(QString& category) {
 
 void MainWindowView::show() {
     ui->placeholder->show();
-//    foreach(QGroupBox* child, this->ui->gridLayout->findChildren<QGroupBox*>("", Qt::FindChildrenRecursively)) {
-//        child->show();
-//    }
 }
 
 void MainWindowView::hide() {
     ui->placeholder->hide();
-//    foreach(QGroupBox* child, this->ui->placeholder->findChildren<QGroupBox*>()) {
-//        child->hide();
-//        qDebug() << "hiding group box";
-//    }
-//    ui->placeholder->
 }
 
 MainWindowView::~MainWindowView() {

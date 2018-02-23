@@ -9,6 +9,7 @@ class IMainWindowView;
 class IMainWindowModel;
 class MainWindowPresenter;
 class AddItemPresenter;
+class CameraView;
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +33,7 @@ public slots:
 private slots:
     void onPushButtonClicked();
     void onMainBtnClicked();
+    void showTakePhoto();
 
 private:
     void setNewLayout();
@@ -41,10 +43,12 @@ private:
     DataModel m_dataModel;
     MainWindowPresenter* m_presenter;
     AddItemPresenter* m_addItemPresenter = nullptr;
+    CameraView* m_cameraView;
 
     enum CurrentState {
         StateMain,
-        StateAddItemView
+        StateAddItemView,
+        StateTakePhoto
     };
 
     CurrentState state = CurrentState::StateMain;

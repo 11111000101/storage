@@ -8,35 +8,125 @@
 #include "Data/shelf.h"
 
 AddItemView::AddItemView(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::AddItemView)
+    ui(new Ui::AddItemView),
+    m_widget(new QWidget(parent))
 {
-    ui->setupUi(this);
+    ui->setupUi(m_widget);
 
-    QObject::connect(ui->categoryComboBox, SIGNAL(activated(QString)),
+    QObject::connect(ui->categoryComboBox, SIGNAL(currentIndexChanged(QString)),
                      this, SLOT(onCategorySelected(QString)));
-    QObject::connect(ui->roomComboBox, SIGNAL(activated(int)),
+    QObject::connect(ui->roomComboBox, SIGNAL(currentIndexChanged(int)),
                      this, SLOT(onRoomSelected(int)));
-    QObject::connect(ui->storageComboBox, SIGNAL(activated(QString)),
+    QObject::connect(ui->storageComboBox, SIGNAL(currentIndexChanged(QString)),
                      this, SLOT(onStorageSelected(QString)));
-}
-
-void AddItemView::show() {
-    QWidget::show();
-}
-
-void AddItemView::reset() {
-    ui->categoryComboBox->clear();
-    ui->customCategoryLineEdit->clear();
-    ui->descriptionTextEdit->clear();
-    ui->expirationDateEdit->clear();
-    ui->storageComboBox->clear();
+    QObject::connect(ui->imagePlaceholderLbl, SIGNAL(clicked()),
+                     this, SIGNAL(takePhoto()));
 }
 
 AddItemView::~AddItemView() {
     qDebug() << "~AddItemView";
     delete ui;
+    delete m_widget;
 }
+
+/** ----------------------------------------------------------------------- **/
+
+void AddItemView::setTitle(const QString &title) {
+    this->ui->titleLineEdit->setText(title);
+}
+
+const QString& AddItemView::getTitle(){
+    return ui->titleLineEdit->text();
+}
+
+void AddItemView::setDescription(const QString &description){
+    this->ui->descriptionTextEdit->document()->setPlainText(description);
+}
+
+const QString& AddItemView::getDescription() {
+    return ui->descriptionTextEdit->toPlainText();
+}
+
+void AddItemView::setCategory(Category* category){
+    if (category != nullptr) {
+        this->ui->categoryComboBox->setCurrentIndex(ui->categoryComboBox->findData(category->id()));
+    } else {
+        this->ui->categoryComboBox->setCurrentIndex(ui->categoryComboBox->findData(""));
+    }
+}
+
+Category* AddItemView::getCategory() {
+    Category* c = new Category();
+    c->setId(ui->categoryComboBox->currentData().toString());
+    if (c->id().isEmpty()) {
+        c->setTitle(ui->customCategoryLineEdit->text());
+    } else {
+        c->setTitle(ui->categoryComboBox->currentText());
+    }
+    return c;
+}
+
+const QPixmap* AddItemView::getPicture() {
+    return ui->imagePlaceholderLbl->pixmap();
+}
+void AddItemView::setPicture(QPixmap* picture) {
+    if (picture != nullptr) {
+        this->ui->imagePlaceholderLbl->setPixmap(*picture);
+    } else {
+        QPixmap p;
+        this->ui->imagePlaceholderLbl->setPixmap(p);
+    }
+}
+
+Shelf* AddItemView::getShelf() {
+    Shelf* s = new Shelf();
+    s->setRoom(this->getRoom());
+    if (this->ui->storageComboBox->currentData().toString() == "") { // New entry
+        s->setTitle(this->ui->storageLineEdit->text());
+    } else {
+        s->setTitle(this->ui->storageComboBox->currentText());
+        s->setId(this->ui->storageComboBox->currentData().toString());
+    }
+    return s;
+}
+void AddItemView::setShelf(Shelf *shelf) {
+    if (shelf != nullptr) {
+        this->ui->storageComboBox->setCurrentIndex(this->ui->storageComboBox->findData(shelf->id()));
+    } else {
+        this->ui->storageComboBox->setCurrentIndex(this->ui->storageComboBox->findData(""));
+    }
+    this->ui->storageComboBox->update();
+}
+
+void AddItemView::setRoom(Room* room) {
+    if (room == nullptr) {
+        ui->roomComboBox->setCurrentIndex(ui->roomComboBox->findData(""));
+    } else {
+        ui->roomComboBox->setCurrentIndex(ui->roomComboBox->findData(room->id()));
+    }
+//    ui->roomComboBox->update();
+}
+Room* AddItemView::getRoom(){
+    Room* p = new Room;
+    if (ui->roomComboBox->currentData().toString() == "") {
+        p->setId("");
+        p->setTitle(ui->roomLineEdit->text());
+    } else {
+        p->setId(ui->roomComboBox->currentData().toString());
+        p->setTitle(ui->roomComboBox->currentText());
+    }
+    return p;
+}
+
+void AddItemView::setExpirationDate(const QDate& expirationDate) {
+    ui->expirationDateEdit->setDate(expirationDate);
+}
+const QDate& AddItemView::getExpirationDate(){
+    return ui->expirationDateEdit->date();
+}
+
+
+/** ----------------------------------------------------------------------- **/
 
 void AddItemView::setCategories(QList<Category*> categories) {
     this->ui->categoryComboBox->clear();
@@ -48,10 +138,6 @@ void AddItemView::setCategories(QList<Category*> categories) {
     }
     ui->categoryComboBox->addItem("Neuer Eintrag", "");
     setCustomCategoryVisible(ui->categoryComboBox->currentData().toString().isEmpty());
-}
-
-void AddItemView::setCustomCategoryVisible(bool visible) {
-    this->ui->customCategoryLineEdit->setVisible(visible);
 }
 
 void AddItemView::setShelves(QList<Shelf*> shelves) {
@@ -80,57 +166,7 @@ void AddItemView::setRooms(QList<Room*> rooms) {
     setRoomLineVisible(ui->roomComboBox->currentData().toString().isEmpty());
 }
 
-void AddItemView::setStorageLineVisible(bool visible) {
-    this->ui->storageLineEdit->setVisible(visible);
-}
-
-void AddItemView::setRoomLineVisible(bool visible) {
-    this->ui->roomLineEdit->setVisible(visible);
-}
-
-
-Category* AddItemView::getCategory() {
-    Category* c = new Category();
-    c->setId(ui->categoryComboBox->currentData().toString());
-    if (c->id().isEmpty()) {
-        c->setTitle(ui->customCategoryLineEdit->text());
-    } else {
-        c->setTitle(ui->categoryComboBox->currentText());
-    }
-    return c;
-}
-
-QString AddItemView::getExpirationDateString(){
-    if (!ui->expirationDateEdit->date().isNull()) {
-        return ui->expirationDateEdit->date().toString(Qt::ISODate);
-    } else {
-        return "";
-    }
-}
-
-QDate AddItemView::getExpirationDate(){
-    return ui->expirationDateEdit->date();
-}
-
-QString AddItemView::getTitle(){
-    return ui->titleLineEdit->text();
-}
-
-QString AddItemView::getDescription() {
-    return ui->descriptionTextEdit->toPlainText();
-}
-
-Room* AddItemView::getRoom(){
-    Room* p = new Room;
-    if (ui->roomComboBox->currentData().toString() == "") {
-        p->setId("");
-        p->setTitle(ui->roomLineEdit->text());
-    } else {
-        p->setId(ui->roomComboBox->currentData().toString());
-        p->setTitle(ui->roomComboBox->currentText());
-    }
-    return p;
-}
+/** --------------------------- SLOTS ------------------------------------- **/
 
 void AddItemView::onCategorySelected(QString category) {
     this->setCustomCategoryVisible(category == "Neuer Eintrag");
@@ -148,19 +184,38 @@ void AddItemView::onRoomSelected(int roomIndex) {
     emit roomSelectionChanged(this->ui->roomComboBox->itemData(roomIndex).toString());
 }
 
-QImage* AddItemView::getImage(){
-    return nullptr;
+/** ----------------------------------------------------------------------- **/
+
+void AddItemView::hide() {
+    m_widget->hide();
 }
 
-Shelf* AddItemView::getShelf() {
-    Shelf* s = new Shelf();
-    s->setRoom(this->getRoom());
-    if (this->ui->storageComboBox->currentData().toString() == "") { // New entry
-        s->setTitle(this->ui->storageLineEdit->text());
-    } else {
-        s->setTitle(this->ui->storageComboBox->currentText());
-        s->setId(this->ui->storageComboBox->currentData().toString());
-    }
-    return s;
+void AddItemView::show() {
+    m_widget->show();
 }
 
+void AddItemView::reset() {
+    ui->categoryComboBox->clear();
+    ui->customCategoryLineEdit->clear();
+    ui->descriptionTextEdit->clear();
+    ui->expirationDateEdit->clear();
+    ui->storageComboBox->clear();
+}
+
+QWidget* AddItemView::getWidget() {
+    return m_widget;
+}
+
+/** -------------------------------- private ------------------------------ **/
+
+void AddItemView::setCustomCategoryVisible(bool visible) {
+    this->ui->customCategoryLineEdit->setVisible(visible);
+}
+
+void AddItemView::setStorageLineVisible(bool visible) {
+    this->ui->storageLineEdit->setVisible(visible);
+}
+
+void AddItemView::setRoomLineVisible(bool visible) {
+    this->ui->roomLineEdit->setVisible(visible);
+}

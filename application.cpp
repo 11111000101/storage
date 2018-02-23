@@ -15,10 +15,12 @@
 #include "MainWindow/additempresenter.h"
 
 #include "Data/dbmanager.h"
+#include "MainWindow/CameraView.hpp"
 
 #include <QVBoxLayout>
 #include <QGroupBox>
 #include <QSpacerItem>
+#include <QDebug>
 
 Application::Application(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), m_dataModel(new DBManager(QString("./db.sqlite")))
@@ -28,6 +30,7 @@ Application::Application(QWidget *parent)
     setNewLayout();
 
     m_presenter = new MainWindowPresenter(new MainWindowView(), m_dataModel);
+    m_cameraView = new CameraView();
 
     QLayoutItem* spacer = ui->placeholder->layout()->takeAt(ui->placeholder->layout()->count()-1);
     ui->placeholder->layout()->addWidget(m_presenter->getWidget());
@@ -44,6 +47,9 @@ Application::Application(QWidget *parent)
     // show addItemView
     QObject::connect(ui->pushButton, SIGNAL(clicked(bool)),
                      this, SLOT(onPushButtonClicked()));
+
+    QObject::connect(m_addItemPresenter, SIGNAL(takePhoto()),
+                     this, SLOT(showTakePhoto()));
 //    QObject::connect(this->m_addItemPresenter, SIGNAL(itemUpdatedOrInserted(QString)),
 //                     this->m_presenter, SLOT(onUpdatedItem(QString)));
 }
@@ -52,22 +58,6 @@ Application::~Application() {
     delete this->m_presenter;
     delete this->ui;
     delete this->m_addItemPresenter;
-}
-
-void Application::onMainBtnClicked() {
-    switch (this->state) {
-    case CurrentState::StateMain:
-        break;
-    case CurrentState::StateAddItemView:
-        this->setPushButtonLabel("Add");
-        ui->placeholder->layout()->removeWidget(m_addItemPresenter->getWidget());
-        m_addItemPresenter->getWidget()->hide();
-        this->showMainView();
-        this->state = CurrentState::StateMain;
-        break;
-    default:
-        break;
-    }
 }
 
 void Application::onPushButtonClicked() {
@@ -81,7 +71,7 @@ void Application::onPushButtonClicked() {
     case CurrentState::StateAddItemView:
         m_addItemPresenter->saveItem();
         ui->placeholder->layout()->removeWidget(m_addItemPresenter->getWidget());
-        m_addItemPresenter->getWidget()->hide();
+        m_addItemPresenter->hide();
         showMainView();
         this->setPushButtonLabel("Add");
         this->state = CurrentState::StateMain;
@@ -90,10 +80,35 @@ void Application::onPushButtonClicked() {
     }
 }
 
+void Application::onMainBtnClicked() {
+    switch (this->state) {
+    case CurrentState::StateMain:
+        break;
+    case CurrentState::StateAddItemView:
+        this->setPushButtonLabel("Add");
+        ui->placeholder->layout()->removeWidget(m_addItemPresenter->getWidget());
+        m_addItemPresenter->hide();
+        this->showMainView();
+        this->state = CurrentState::StateMain;
+        break;
+    default:
+        break;
+    }
+}
+
+void Application::showTakePhoto() {
+    qDebug() << "showTakePhoto";
+    this->state = CurrentState::StateTakePhoto;
+    ui->placeholder->layout()->removeWidget(m_addItemPresenter->getWidget());
+    m_addItemPresenter->hide();
+    ui->placeholder->layout()->addWidget(m_cameraView);
+}
+
 void Application::showAddItemView() {
     QLayoutItem* spacer = ui->placeholder->layout()->takeAt(ui->placeholder->layout()->count()-1);
     ui->placeholder->layout()->addWidget(m_addItemPresenter->getWidget());
     ui->placeholder->layout()->addItem(spacer);
+    m_addItemPresenter->showEditItem("");
     m_addItemPresenter->show();
 }
 

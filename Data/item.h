@@ -2,18 +2,18 @@
 #define ITEM_H
 
 #include <QString>
-#include <QImage>
 
 
 class Category;
 class Shelf;
 class QDate;
+class QPixmap;
 
 class Item
 {
 public:
     Item(const QString& id, const QString& name, const QString& description,
-         Category* category, QImage* picture = 0);
+         Category* category, QPixmap* picture = 0);
     ~Item();
     const QString name();
     void setName(const QString &name);
@@ -21,16 +21,16 @@ public:
     const QString description();
     void setDescription(const QString &description);
 
-    Category& category();
+    Category* category();
     void setCategory(Category* category);
 
-    QImage *picture();
-    void setPicture(QImage *picture);
+    QPixmap *picture();
+    void setPicture(QPixmap *picture);
 
     const QString& id();
     void setId(const QString &id);
 
-    Shelf& shelf();
+    Shelf* shelf();
     void setShelf(Shelf* shelf);
 
     QString getExpirationDateString();
@@ -45,7 +45,7 @@ private:
     QString m_description;
     Category* m_category;
     Shelf* m_shelf;
-    QImage* m_picture;
+    QPixmap* m_picture;
     QDate* m_expirationDate = nullptr;
 };
 

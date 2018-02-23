@@ -38,7 +38,7 @@ void DataModel::changeDescription(const QString& itemId, const QString& desc) {
     m_dbManager->updateDescription(itemId, desc);
 }
 
-void DataModel::changeImage(const QString& itemId, QImage* image) {
+void DataModel::changeImage(const QString& itemId, QPixmap* image) {
     m_dbManager->updateImage(itemId, image);
 }
 
@@ -62,7 +62,7 @@ QList<Room*> DataModel::getAllRooms() {
 
 void DataModel::saveItem(const QString& id, const QString& name, const QString& description,
                 Category* category, Shelf* shelf, const QDate& expirationDate,
-                QImage* picture) {
+                QPixmap* picture) {
     Item i(id, name, description, category, picture);
     i.setExpirationDate(expirationDate);
     i.setShelf(shelf);

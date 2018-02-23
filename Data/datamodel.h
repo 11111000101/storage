@@ -25,7 +25,7 @@ public slots:
     virtual void changeCategory(const QString& itemId, const QString& categoryId);
     virtual void changeTitle(const QString& itemId, const QString& title);
     virtual void changeDescription(const QString& itemId, const QString& desc);
-    virtual void changeImage(const QString& itemId, QImage* image);
+    virtual void changeImage(const QString& itemId, QPixmap* image);
 
 
     QList<Category*> getAllCategories();
@@ -36,7 +36,7 @@ public slots:
 
     void saveItem(const QString& id, const QString& name, const QString& description,
                   Category* category, Shelf* shelf, const QDate& expirationDate,
-                  QImage* picture = nullptr);
+                  QPixmap* picture = nullptr);
 
 signals:
     void itemUpdatedOrInserted(const QString& id);
